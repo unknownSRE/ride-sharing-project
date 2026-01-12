@@ -21,3 +21,8 @@
 
 ** Over databaes design **
 ![database snapshot](./assets/image-7.png)
+
+Contributors:
+Rest Api - Diya Adhikary & Soumyata Sarkar
+Soap Api - Adarsh Ranjan
+GraphQL - Anamika Ghosh & Gyaneshwer JHA
