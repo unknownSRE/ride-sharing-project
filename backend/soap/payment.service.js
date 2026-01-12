@@ -1,51 +1,38 @@
-import { Payment, Ride } from "../models/index.js";
+import Payment from "../models/Payment.js";
 
-const service = {
+const paymentService = {
   PaymentService: {
     PaymentPort: {
-      createPayment: async function (args) {
+      createPaymentRequest: async function (args) {
+        console.log("SOAP Request Received:", args);
+
         try {
-          console.log("SOAP Request Received:", args);
-
-          const ride_id = parseInt(args.ride_id);
-          const amount = parseFloat(args.amount);
-          const method = args.method || "cash"; // default to cash if missing
-
-          const ride = await Ride.findByPk(ride_id);
-          if (!ride) {
-            return {
-              status: "FAILED",
-              message: "Ride not found",
-              paymentId: 0,
-            };
-          }
-
-          if (ride.status !== "completed") {
-            return {
-              status: "FAILED",
-              message: "Ride is not completed yet",
-              paymentId: 0,
-            };
+          if (!args.ride_id || !args.amount) {
+            throw new Error("Missing ride_id or amount");
           }
 
           const newPayment = await Payment.create({
-            ride_id,
-            amount,
-            method,
+            ride_id: args.ride_id,
+            amount: args.amount,
+            method: args.method || "UPI",
             status: "completed",
           });
 
           return {
+            transaction_id: "TXN-" + Date.now(),
             status: "SUCCESS",
-            message: "Payment processed successfully",
-            paymentId: newPayment.payment_id,
+            message: `Payment of ${args.amount} processed successfully.`,
           };
         } catch (error) {
-          console.error("SOAP Error:", error);
-          return {
-            status: "ERROR",
-            message: error.message,
-            paymentId: 0,
+          console.error("SOAP Processing Error:", error);
+          throw {
+            Fault: {
+              Code: {
+                Value: "soap:Sender",
+                Subcode: { value: "rpc:BadArguments" },
+              },
+              Reason: { Text: error.message },
+            },
           };
         }
       },
@@ -53,4 +40,4 @@ const service = {
   },
 };
 
-export default service;
+export default paymentService;

@@ -96,3 +96,25 @@ export const cancel_ride = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+export const updateRider = async (req, res) => {
+  try {
+    const { ride_id } = req.params;
+    const { rider_id } = req.body;
+
+    const ride = await Ride.findByPk(ride_id);
+    if (!ride) {
+      return res.status(404).json({ message: "Ride not found" });
+    }
+
+    ride.rider_id = rider_id;
+    await ride.save();
+
+    res.status(200).json({
+      message: "Rider updated successfully",
+      ride,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};

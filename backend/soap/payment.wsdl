@@ -1,38 +1,57 @@
 <definitions name="PaymentService"
              targetNamespace="http://localhost:3000/soap/payment"
-             xmlns:tns="http://localhost:3000/soap/payment"
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-             xmlns="http://schemas.xmlsoap.org/wsdl/">
+             xmlns:tns="http://localhost:3000/soap/payment"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 
-    <message name="createPaymentRequest">
-        <part name="ride_id" type="xsd:int"/>
-        <part name="amount" type="xsd:string"/>
-        <part name="method" type="xsd:string"/>
+    <types>
+        <xsd:schema targetNamespace="http://localhost:3000/soap/payment">
+            <xsd:element name="createPaymentRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="ride_id" type="xsd:int"/>
+                        <xsd:element name="amount" type="xsd:decimal"/>
+                        <xsd:element name="method" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="createPaymentResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="transaction_id" type="xsd:string"/>
+                        <xsd:element name="status" type="xsd:string"/>
+                        <xsd:element name="message" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <message name="CreatePaymentInput">
+        <part name="parameters" element="tns:createPaymentRequest"/>
+    </message>
+    <message name="CreatePaymentOutput">
+        <part name="parameters" element="tns:createPaymentResponse"/>
     </message>
 
-    <message name="createPaymentResponse">
-        <part name="status" type="xsd:string"/>
-        <part name="message" type="xsd:string"/>
-        <part name="paymentId" type="xsd:int"/>
-    </message>
-
-    <portType name="PaymentPort">
-        <operation name="createPayment">
-            <input message="tns:createPaymentRequest"/>
-            <output message="tns:createPaymentResponse"/>
+    <portType name="PaymentPortType">
+        <operation name="createPaymentRequest">
+            <input message="tns:CreatePaymentInput"/>
+            <output message="tns:CreatePaymentOutput"/>
         </operation>
     </portType>
 
-    <binding name="PaymentBinding" type="tns:PaymentPort">
-        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-        <operation name="createPayment">
-            <soap:operation soapAction="createPayment"/>
+    <binding name="PaymentBinding" type="tns:PaymentPortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createPaymentRequest">
+            <soap:operation soapAction="createPaymentRequest"/>
             <input>
-                <soap:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                <soap:body use="literal"/>
             </input>
             <output>
-                <soap:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+                <soap:body use="literal"/>
             </output>
         </operation>
     </binding>

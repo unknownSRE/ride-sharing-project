@@ -9,5 +9,6 @@ router.get("/:ride_id", controller.get_ride_by_id);
 router.put("/:ride_id/accept", controller.accept_ride);
 router.put("/:ride_id/complete", controller.complete_ride);
 router.put("/:ride_id/cancel", controller.cancel_ride);
+router.put("/update-rider/:ride_id", controller.updateRider);
 
 export default router;

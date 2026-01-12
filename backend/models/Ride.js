@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../config/db.js";
-
 const Ride = sequelize.define(
   "Ride",
   {

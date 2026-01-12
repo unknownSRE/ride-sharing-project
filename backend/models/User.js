@@ -28,21 +28,12 @@ const User = sequelize.define(
     },
     role: {
       type: DataTypes.ENUM("rider", "driver"),
-      allowNull: false,
-    },
-    license_number: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      unique: true,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW,
+      defaultValue: "rider",
     },
   },
   {
     tableName: "users",
-    timestamps: false,
+    timestamps: true,
   }
 );
 
