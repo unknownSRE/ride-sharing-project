@@ -30,6 +30,27 @@ const resolvers = {
       return await Vehicle.create(input);
     },
 
+    updateVehicle: async (_, { driver_id, input }) => {
+      const vehicle = await Vehicle.findOne({ where: { driver_id } });
+
+      if (!vehicle) {
+        throw new Error("Vehicle not found for this driver");
+      }
+
+      return await vehicle.update(input);
+    },
+
+    deleteVehicle: async (_, { driver_id }) => {
+      const vehicle = await Vehicle.findOne({ where: { driver_id } });
+
+      if (!vehicle) {
+        throw new Error("No vehicle found to delete");
+      }
+
+      await vehicle.destroy();
+      return "Vehicle deleted successfully";
+    },
+
     addRating: async (_, { input }) => {
       return await Rating.create(input);
     },
