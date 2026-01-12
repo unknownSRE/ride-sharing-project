@@ -1,0 +1,45 @@
+<definitions name="PaymentService"
+             targetNamespace="http://localhost:3000/soap/payment"
+             xmlns:tns="http://localhost:3000/soap/payment"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+    <message name="createPaymentRequest">
+        <part name="ride_id" type="xsd:int"/>
+        <part name="amount" type="xsd:string"/>
+        <part name="method" type="xsd:string"/>
+    </message>
+
+    <message name="createPaymentResponse">
+        <part name="status" type="xsd:string"/>
+        <part name="message" type="xsd:string"/>
+        <part name="paymentId" type="xsd:int"/>
+    </message>
+
+    <portType name="PaymentPort">
+        <operation name="createPayment">
+            <input message="tns:createPaymentRequest"/>
+            <output message="tns:createPaymentResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="PaymentBinding" type="tns:PaymentPort">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="createPayment">
+            <soap:operation soapAction="createPayment"/>
+            <input>
+                <soap:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </input>
+            <output>
+                <soap:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="PaymentService">
+        <port name="PaymentPort" binding="tns:PaymentBinding">
+            <soap:address location="http://localhost:3000/soap/payment"/>
+        </port>
+    </service>
+</definitions>
