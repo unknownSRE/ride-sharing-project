@@ -1,14 +1,22 @@
 import express from "express";
-import * as controller from "../controllers/ride.controller.js";
+import {
+  requestRide,
+  getAllRides,
+  getRideById,
+  acceptRide,
+  completeRide,
+  cancelRide,
+  updateRider,
+} from "../controllers/ride.controller.js";
 
 const router = express.Router();
 
-router.post("/request", controller.create_ride);
-router.get("/", controller.list_rides);
-router.get("/:ride_id", controller.get_ride_by_id);
-router.put("/:ride_id/accept", controller.accept_ride);
-router.put("/:ride_id/complete", controller.complete_ride);
-router.put("/:ride_id/cancel", controller.cancel_ride);
-router.put("/update-rider/:ride_id", controller.updateRider);
+router.post("/request", requestRide);
+router.get("/", getAllRides);
+router.get("/:ride_id", getRideById);
+router.put("/accept/:ride_id", acceptRide);
+router.put("/complete/:ride_id", completeRide);
+router.put("/cancel/:ride_id", cancelRide);
+router.put("/update-rider/:ride_id", updateRider);
 
 export default router;

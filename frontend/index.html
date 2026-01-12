@@ -26,66 +26,150 @@
     </header>
 
     <main class="container">
-        <div class="services-grid">
-            
-            <section class="service-card" id="ride-service">
-                <div class="card-header">
-                    <i class="fas fa-route"></i>
-                    <h3>Book a SwiftRide</h3>
-                </div>
-                <div class="card-body">
-                    <input type="text" id="pickup" placeholder="Pickup Point" class="locked-input">
-                    <input type="text" id="dropoff" placeholder="Destination" class="locked-input">
-                    <button onclick="guardAction(requestRide)" class="btn-block btn-primary">Request Ride</button>
-                </div>
-            </section>
+        <!-- RIDER DASHBOARD -->
+        <div id="riderDashboard" class="hidden">
+            <div class="services-grid">
+                <section class="service-card">
+                    <div class="card-header">
+                        <i class="fas fa-route"></i>
+                        <h3>Request a Ride</h3>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" id="pickup" placeholder="Pickup Location" required>
+                        <input type="text" id="dropoff" placeholder="Drop Location" required>
+                        <button onclick="requestRide()" class="btn-block btn-primary">
+                            <i class="fas fa-taxi"></i> Request Ride
+                        </button>
+                    </div>
+                </section>
 
-            <section class="service-card" id="vehicle-service">
-                <div class="card-header">
-                    <i class="fas fa-id-badge"></i>
-                    <h3>Driver Center</h3>
-                </div>
-                <div class="card-body">
-                    <p>Register your vehicle and manage your car details.</p>
-                    <button onclick="guardAction(openVehicleReg)" class="btn-block btn-secondary">Register Vehicle</button>
-                </div>
-            </section>
+                <section class="service-card">
+                    <div class="card-header">
+                        <i class="fas fa-history"></i>
+                        <h3>My Rides</h3>
+                    </div>
+                    <div class="card-body">
+                        <button onclick="loadMyRides()" class="btn-block btn-secondary">
+                            <i class="fas fa-sync"></i> Refresh Rides
+                        </button>
+                        <div id="myRidesContainer" class="rides-list"></div>
+                    </div>
+                </section>
+            </div>
 
-            <section class="service-card" id="payment-service">
-                <div class="card-header">
-                    <i class="fas fa-wallet"></i>
-                    <h3>Payments</h3>
-                </div>
-                <div class="card-body">
-                    <p>Securely settle fares </p>
-                    <button onclick="guardAction(showPayments)" class="btn-block btn-outline">Payment History</button>
-                </div>
-            </section>
-
-            <section class="service-card" id="rating-service">
-                <div class="card-header">
-                    <i class="fas fa-star"></i>
-                    <h3>Ratings</h3>
-                </div>
-                <div class="card-body">
-                    <p>Rate your experience and view community feedback.</p>
-                    <button onclick="guardAction(showRatings)" class="btn-block btn-outline">Community Feedback</button>
-                </div>
+            <section class="data-feed card">
+                <h3><i class="fas fa-list"></i> My Active Rides</h3>
+                <div id="riderActiveFeed"></div>
             </section>
         </div>
 
-        <section class="data-feed card">
-            <h3>Live Platform Updates</h3>
-            <div id="liveFeed">
-                <p class="text-muted">Login to see active rides and platform status...</p>
+        <!-- DRIVER DASHBOARD -->
+        <div id="driverDashboard" class="hidden">
+            <div class="services-grid">
+                <section class="service-card">
+                    <div class="card-header">
+                        <i class="fas fa-car"></i>
+                        <h3>Vehicle Management</h3>
+                    </div>
+                    <div class="card-body">
+                        <button onclick="openVehicleRegistration()" class="btn-block btn-primary">
+                            <i class="fas fa-plus-circle"></i> Register Vehicle
+                        </button>
+                        <button onclick="loadMyVehicle()" class="btn-block btn-secondary">
+                            <i class="fas fa-info-circle"></i> View My Vehicle
+                        </button>
+                        <div id="vehicleInfo" class="info-box"></div>
+                    </div>
+                </section>
+
+                <section class="service-card">
+                    <div class="card-header">
+                        <i class="fas fa-clock"></i>
+                        <h3>Available Rides</h3>
+                    </div>
+                    <div class="card-body">
+                        <button onclick="loadAvailableRides()" class="btn-block btn-accent">
+                            <i class="fas fa-sync"></i> Refresh Available Rides
+                        </button>
+                        <div id="availableRidesContainer" class="rides-list"></div>
+                    </div>
+                </section>
             </div>
-        </section>
+
+            <section class="data-feed card">
+                <h3><i class="fas fa-road"></i> My Accepted Rides</h3>
+                <div id="driverActiveFeed"></div>
+            </section>
+        </div>
+
+        <!-- COMMON SECTIONS -->
+        <div id="commonSections" class="hidden">
+            <div class="services-grid">
+                <section class="service-card">
+                    <div class="card-header">
+                        <i class="fas fa-star"></i>
+                        <h3>Ratings</h3>
+                    </div>
+                    <div class="card-body">
+                        <button onclick="openRatingModal()" class="btn-block btn-secondary">
+                            <i class="fas fa-plus"></i> Add Rating
+                        </button>
+                        <button onclick="viewMyRatings()" class="btn-block btn-outline">
+                            <i class="fas fa-eye"></i> View My Ratings
+                        </button>
+                    </div>
+                </section>
+
+                <section class="service-card">
+                    <div class="card-header">
+                        <i class="fas fa-wallet"></i>
+                        <h3>Payments</h3>
+                    </div>
+                    <div class="card-body">
+                        <button onclick="openPaymentModal()" class="btn-block btn-secondary">
+                            <i class="fas fa-credit-card"></i> Make Payment
+                        </button>
+                        <button onclick="viewAllRides()" class="btn-block btn-outline">
+                            <i class="fas fa-history"></i> All Rides
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+        <!-- GUEST VIEW -->
+        <div id="guestView">
+            <div class="hero-section">
+                <h1><i class="fas fa-car-side"></i> Welcome to SwiftRide</h1>
+                <p>Your complete ride-sharing platform with integrated services</p>
+                <div class="feature-cards">
+                    <div class="feature">
+                        <i class="fas fa-bolt"></i>
+                        <h3>Quick Booking</h3>
+                        <p>Request rides with real-time fare calculation</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Secure Payments</h3>
+                        <p>SOAP-based payment gateway integration</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-star"></i>
+                        <h3>Rating System</h3>
+                        <p>GraphQL-powered community feedback</p>
+                    </div>
+                </div>
+                <button class="btn-hero" onclick="openModal('registerModal')">Get Started Now</button>
+            </div>
+        </div>
     </main>
 
+    <!-- REGISTRATION MODAL -->
     <div id="registerModal" class="modal">
         <div class="modal-content">
+            <span class="close" onclick="closeModal('registerModal')">&times;</span>
             <div class="brand-small">
-                <i class="fas fa-car-side"></i> <span>SwiftRide Join</span>
+                <i class="fas fa-car-side"></i> <span>Join SwiftRide</span>
             </div>
             <form id="regForm" novalidate>
                 <input type="text" id="regName" placeholder="Full Name" required>
@@ -108,13 +192,94 @@
         </div>
     </div>
 
+    <!-- LOGIN MODAL -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
             <h3>Login to SwiftRide</h3>
             <input type="email" id="loginEmail" placeholder="Email">
             <input type="password" id="loginPass" placeholder="Password">
             <button class="btn-primary btn-block" onclick="handleLogin()">Login</button>
             <button type="button" class="btn-link" onclick="closeModal('loginModal')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- VEHICLE REGISTRATION MODAL -->
+    <div id="vehicleModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('vehicleModal')">&times;</span>
+            <h3><i class="fas fa-car"></i> Register Your Vehicle</h3>
+            <form id="vehicleForm">
+                <input type="text" id="vehicleMake" placeholder="Make (e.g., Toyota)" required>
+                <input type="text" id="vehicleModel" placeholder="Model (e.g., Camry)" required>
+                <input type="text" id="vehiclePlate" placeholder="Plate Number" required>
+                <input type="text" id="vehicleColor" placeholder="Color">
+                <input type="number" id="vehicleYear" placeholder="Year" min="1900" max="2030">
+                <button type="submit" class="btn-primary btn-block">Register Vehicle</button>
+                <button type="button" class="btn-link" onclick="closeModal('vehicleModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('paymentModal')">&times;</span>
+            <h3><i class="fas fa-credit-card"></i> Make Payment</h3>
+            <form id="paymentForm">
+                <input type="number" id="paymentRideId" placeholder="Ride ID" required>
+                <input type="number" id="paymentAmount" placeholder="Amount (₹)" step="0.01" required>
+                <select id="paymentMethod" required>
+                    <option value="">Select Payment Method</option>
+                    <option value="cash">Cash</option>
+                    <option value="credit_card">Credit Card</option>
+                    <option value="wallet">Wallet</option>
+                    <option value="upi">UPI</option>
+                </select>
+                <button type="submit" class="btn-primary btn-block">Process Payment (SOAP)</button>
+                <button type="button" class="btn-link" onclick="closeModal('paymentModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RATING MODAL -->
+    <div id="ratingModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('ratingModal')">&times;</span>
+            <h3><i class="fas fa-star"></i> Add Rating</h3>
+            <form id="ratingForm">
+                <input type="number" id="ratingRideId" placeholder="Ride ID" required>
+                <input type="number" id="ratingGivenTo" placeholder="User ID to Rate" required>
+                <select id="ratingScore" required>
+                    <option value="">Select Rating</option>
+                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ Good</option>
+                    <option value="3">⭐⭐⭐ Average</option>
+                    <option value="2">⭐⭐ Poor</option>
+                    <option value="1">⭐ Very Poor</option>
+                </select>
+                <textarea id="ratingComment" placeholder="Comment (optional)" rows="3"></textarea>
+                <button type="submit" class="btn-primary btn-block">Submit Rating (GraphQL)</button>
+                <button type="button" class="btn-link" onclick="closeModal('ratingModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- RATINGS VIEW MODAL -->
+    <div id="ratingsViewModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('ratingsViewModal')">&times;</span>
+            <h3><i class="fas fa-star"></i> My Ratings</h3>
+            <div id="ratingsViewContainer"></div>
+        </div>
+    </div>
+
+    <!-- ALL RIDES MODAL -->
+    <div id="allRidesModal" class="modal">
+        <div class="modal-content large">
+            <span class="close" onclick="closeModal('allRidesModal')">&times;</span>
+            <h3><i class="fas fa-list"></i> All Rides</h3>
+            <div id="allRidesContainer"></div>
         </div>
     </div>
 
