@@ -1,1 +1,123 @@
-we will start soon
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftRide | Your Integrated Mobility Solution</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="brand">
+                <i class="fas fa-car-side logo-icon"></i>
+                <span class="logo-text">SwiftRide</span>
+            </div>
+            <div id="auth-section">
+                <button class="btn-outline" onclick="openModal('loginModal')">Login</button>
+                <button class="btn-primary" onclick="openModal('registerModal')">Get Started</button>
+            </div>
+            <div id="user-display" class="hidden">
+                <span id="welcomeText"></span>
+                <button class="btn-outline" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="services-grid">
+            
+            <section class="service-card" id="ride-service">
+                <div class="card-header">
+                    <i class="fas fa-route"></i>
+                    <h3>Book a SwiftRide</h3>
+                </div>
+                <div class="card-body">
+                    <input type="text" id="pickup" placeholder="Pickup Point" class="locked-input">
+                    <input type="text" id="dropoff" placeholder="Destination" class="locked-input">
+                    <button onclick="guardAction(requestRide)" class="btn-block btn-primary">Request Ride</button>
+                </div>
+            </section>
+
+            <section class="service-card" id="vehicle-service">
+                <div class="card-header">
+                    <i class="fas fa-id-badge"></i>
+                    <h3>Driver Center</h3>
+                </div>
+                <div class="card-body">
+                    <p>Register your vehicle and manage your car details.</p>
+                    <button onclick="guardAction(openVehicleReg)" class="btn-block btn-secondary">Register Vehicle</button>
+                </div>
+            </section>
+
+            <section class="service-card" id="payment-service">
+                <div class="card-header">
+                    <i class="fas fa-wallet"></i>
+                    <h3>Payments</h3>
+                </div>
+                <div class="card-body">
+                    <p>Securely settle fares </p>
+                    <button onclick="guardAction(showPayments)" class="btn-block btn-outline">Payment History</button>
+                </div>
+            </section>
+
+            <section class="service-card" id="rating-service">
+                <div class="card-header">
+                    <i class="fas fa-star"></i>
+                    <h3>Ratings</h3>
+                </div>
+                <div class="card-body">
+                    <p>Rate your experience and view community feedback.</p>
+                    <button onclick="guardAction(showRatings)" class="btn-block btn-outline">Community Feedback</button>
+                </div>
+            </section>
+        </div>
+
+        <section class="data-feed card">
+            <h3>Live Platform Updates</h3>
+            <div id="liveFeed">
+                <p class="text-muted">Login to see active rides and platform status...</p>
+            </div>
+        </section>
+    </main>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <div class="brand-small">
+                <i class="fas fa-car-side"></i> <span>SwiftRide Join</span>
+            </div>
+            <form id="regForm" novalidate>
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email Address" required>
+                <input type="tel" id="regPhone" placeholder="Phone Number (10 digits)" required>
+                <input type="password" id="regPass" placeholder="Password (Min 6 chars)" required>
+                
+                <select id="regRole" onchange="toggleDriverFields()">
+                    <option value="rider">I want to Ride</option>
+                    <option value="driver">I want to Drive</option>
+                </select>
+
+                <div id="driverOnlyFields" class="hidden">
+                    <input type="text" id="regLicense" placeholder="Driver License Number">
+                </div>
+
+                <button type="submit" class="btn-primary btn-block">Create Account</button>
+                <button type="button" class="btn-link" onclick="closeModal('registerModal')">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h3>Login to SwiftRide</h3>
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPass" placeholder="Password">
+            <button class="btn-primary btn-block" onclick="handleLogin()">Login</button>
+            <button type="button" class="btn-link" onclick="closeModal('loginModal')">Cancel</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
