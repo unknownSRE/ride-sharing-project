@@ -1,0 +1,56 @@
+<div class="service-card">
+  <div class="card-header">
+    <i class="fas fa-star"></i>
+    <h3>Ratings</h3>
+  </div>
+  <div class="card-body">
+    <button (click)="openAddRatingModal()" class="btn-block btn-secondary">
+      <i class="fas fa-plus"></i> Add Rating
+    </button>
+    <button (click)="openViewRatingsModal()" class="btn-block btn-outline">
+      <i class="fas fa-eye"></i> View My Ratings
+    </button>
+  </div>
+</div>
+
+<!-- Add Rating Modal -->
+<div *ngIf="showAddModal" class="modal">
+  <div class="modal-content">
+    <span class="close" (click)="closeAddModal()">&times;</span>
+    <h3><i class="fas fa-star"></i> Add Rating</h3>
+    <form (submit)="submitRating()">
+      <input type="number" [(ngModel)]="newRating.ride_id" placeholder="Ride ID" required>
+      <input type="number" [(ngModel)]="newRating.given_to" placeholder="User ID to Rate" required>
+      <select [(ngModel)]="newRating.score" required>
+        <option value="">Select Rating</option>
+        <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+        <option value="4">⭐⭐⭐⭐ Good</option>
+        <option value="3">⭐⭐⭐ Average</option>
+        <option value="2">⭐⭐ Poor</option>
+        <option value="1">⭐ Very Poor</option>
+      </select>
+      <textarea [(ngModel)]="newRating.comment" placeholder="Comment (optional)" rows="3"></textarea>
+      <button type="submit" class="btn-primary btn-block">Submit Rating (GraphQL)</button>
+      <button type="button" class="btn-link" (click)="closeAddModal()">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!-- View Ratings Modal -->
+<div *ngIf="showViewModal" class="modal">
+  <div class="modal-content large">
+    <span class="close" (click)="closeViewModal()">&times;</span>
+    <h3><i class="fas fa-star"></i> My Ratings</h3>
+    <div id="ratingsViewContainer">
+      <div *ngFor="let r of ratings" class="rating-item">
+        <div class="rating-header">
+          <span class="rating-stars">{{ '⭐'.repeat(r.score) }}</span>
+          <span class="text-muted">Ride #{{ r.ride_id }}</span>
+        </div>
+        <p><strong>From User ID:</strong> {{ r.given_by }}</p>
+        <p><strong>Comment:</strong> {{ r.comment || 'No comment' }}</p>
+      </div>
+      <p *ngIf="ratings.length === 0" class="text-muted">No ratings received yet.</p>
+    </div>
+  </div>
+</div>

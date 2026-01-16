@@ -6,7 +6,9 @@ const SOAP_URL = "http://localhost:3000/soap/payment";
 
 function toggleDriverFields() {
   const role = document.getElementById("regRole").value;
-  document.getElementById("driverOnlyFields").classList.toggle("hidden", role !== "driver");
+  document
+    .getElementById("driverOnlyFields")
+    .classList.toggle("hidden", role !== "driver");
 }
 
 function openModal(id) {
@@ -57,7 +59,7 @@ async function soapFetch(envelope, action) {
       method: "POST",
       headers: {
         "Content-Type": "text/xml; charset=utf-8",
-        "SOAPAction": action,
+        SOAPAction: action,
       },
       body: envelope,
     });
@@ -79,10 +81,14 @@ document.getElementById("regForm").onsubmit = async (e) => {
   const role = document.getElementById("regRole").value;
   const license = document.getElementById("regLicense").value.trim();
 
-  if (!fullName || !email) return showNotification("Name and Email are required.", "error");
-  if (!/^\d{10}$/.test(phone)) return showNotification("Phone number must be exactly 10 digits.", "error");
-  if (password.length < 6) return showNotification("Password must be at least 6 characters.", "error");
-  if (role === "driver" && !license) return showNotification("Drivers must provide a license number.", "error");
+  if (!fullName || !email)
+    return showNotification("Name and Email are required.", "error");
+  if (!/^\d{10}$/.test(phone))
+    return showNotification("Phone number must be exactly 10 digits.", "error");
+  if (password.length < 6)
+    return showNotification("Password must be at least 6 characters.", "error");
+  if (role === "driver" && !license)
+    return showNotification("Drivers must provide a license number.", "error");
 
   const payload = {
     full_name: fullName,
@@ -102,7 +108,10 @@ document.getElementById("regForm").onsubmit = async (e) => {
     currentUser = data.user;
     updateUI(data.user);
     closeModal("registerModal");
-    showNotification(`Welcome to SwiftRide, ${data.user.full_name}!`, "success");
+    showNotification(
+      `Welcome to SwiftRide, ${data.user.full_name}!`,
+      "success"
+    );
     document.getElementById("regForm").reset();
   } catch {}
 };
@@ -110,7 +119,8 @@ document.getElementById("regForm").onsubmit = async (e) => {
 async function handleLogin() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPass").value;
-  if (!email || !password) return showNotification("Please enter email and password.", "error");
+  if (!email || !password)
+    return showNotification("Please enter email and password.", "error");
 
   try {
     const data = await apiFetch("/users/login", {
@@ -130,7 +140,9 @@ async function handleLogin() {
 function updateUI(user) {
   document.getElementById("auth-section").classList.add("hidden");
   document.getElementById("user-display").classList.remove("hidden");
-  document.getElementById("welcomeText").innerText = `Hello, ${user.full_name} (${user.role})`;
+  document.getElementById(
+    "welcomeText"
+  ).innerText = `Hello, ${user.full_name} (${user.role})`;
   document.getElementById("guestView").style.display = "none";
   document.getElementById("commonSections").classList.remove("hidden");
 
@@ -144,7 +156,10 @@ function updateUI(user) {
     document.getElementById("riderDashboard").classList.add("hidden");
     loadAvailableRides();
     loadMyAcceptedRides();
-    refreshInterval = setInterval(() => { loadAvailableRides(); loadMyAcceptedRides(); }, 10000);
+    refreshInterval = setInterval(() => {
+      loadAvailableRides();
+      loadMyAcceptedRides();
+    }, 10000);
   }
 }
 
@@ -157,7 +172,11 @@ function logout() {
 async function requestRide() {
   const pickup = document.getElementById("pickup").value.trim();
   const dropoff = document.getElementById("dropoff").value.trim();
-  if (!pickup || !dropoff) return showNotification("Please enter both pickup and drop locations.", "error");
+  if (!pickup || !dropoff)
+    return showNotification(
+      "Please enter both pickup and drop locations.",
+      "error"
+    );
 
   try {
     const data = await apiFetch("/rides/request", {
@@ -169,7 +188,10 @@ async function requestRide() {
         drop_location: dropoff,
       }),
     });
-    showNotification(`Ride requested successfully! Fare: ${data.ride_details.calculated_fare}`, "success");
+    showNotification(
+      `Ride requested successfully! Fare: ${data.ride_details.calculated_fare}`,
+      "success"
+    );
     document.getElementById("pickup").value = "";
     document.getElementById("dropoff").value = "";
     loadMyRides();
@@ -180,7 +202,7 @@ async function loadMyRides() {
   if (!currentUser) return;
   try {
     const rides = await apiFetch("/rides");
-    const myRides = rides.filter(r => r.rider_id === currentUser.user_id);
+    const myRides = rides.filter((r) => r.rider_id === currentUser.user_id);
     const container = document.getElementById("myRidesContainer");
     const activeFeed = document.getElementById("riderActiveFeed");
 
@@ -190,30 +212,63 @@ async function loadMyRides() {
       return;
     }
 
-    container.innerHTML = myRides.map(ride => `
+    container.innerHTML = myRides
+      .map(
+        (ride) => `
       <div class="ride-item ${ride.status}">
         <div class="ride-header">
           <span class="ride-id">Ride #${ride.ride_id}</span>
           <span class="badge ${ride.status}">${ride.status.toUpperCase()}</span>
         </div>
         <div class="ride-details">
-          <p><i class="fas fa-map-marker-alt"></i> <strong>From:</strong> ${ride.pickup_location}</p>
-          <p><i class="fas fa-map-marker-alt"></i> <strong>To:</strong> ${ride.drop_location}</p>
-          <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹${ride.fare || "N/A"}</p>
-          ${ride.driver_id ? `<p><i class="fas fa-user"></i> <strong>Driver ID:</strong> ${ride.driver_id}</p>` : ""}
+          <p><i class="fas fa-map-marker-alt"></i> <strong>From:</strong> ${
+            ride.pickup_location
+          }</p>
+          <p><i class="fas fa-map-marker-alt"></i> <strong>To:</strong> ${
+            ride.drop_location
+          }</p>
+          <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹${
+            ride.fare || "N/A"
+          }</p>
+          ${
+            ride.driver_id
+              ? `<p><i class="fas fa-user"></i> <strong>Driver ID:</strong> ${ride.driver_id}</p>`
+              : ""
+          }
         </div>
-        ${ride.status === "requested" ? `<button class="btn-sm btn-danger" onclick="cancelRide(${ride.ride_id})">Cancel</button>` : ""}
-        ${ride.status === "ongoing" ? `<p class="text-info"><i class="fas fa-spinner fa-spin"></i> Ride in progress...</p>` : ""}
+        ${
+          ride.status === "requested"
+            ? `<button class="btn-sm btn-danger" onclick="cancelRide(${ride.ride_id})">Cancel</button>`
+            : ""
+        }
+        ${
+          ride.status === "ongoing"
+            ? `<p class="text-info"><i class="fas fa-spinner fa-spin"></i> Ride in progress...</p>`
+            : ""
+        }
       </div>
-    `).join("");
+    `
+      )
+      .join("");
 
-    const activeRides = myRides.filter(r => ["requested", "ongoing"].includes(r.status));
-    activeFeed.innerHTML = activeRides.length > 0 ? activeRides.map(ride => `
+    const activeRides = myRides.filter((r) =>
+      ["requested", "ongoing"].includes(r.status)
+    );
+    activeFeed.innerHTML =
+      activeRides.length > 0
+        ? activeRides
+            .map(
+              (ride) => `
       <div class="feed-item">
-        <strong>Ride #${ride.ride_id}</strong> - ${ride.status.toUpperCase()}<br>
+        <strong>Ride #${
+          ride.ride_id
+        }</strong> - ${ride.status.toUpperCase()}<br>
         ${ride.pickup_location} → ${ride.drop_location}
       </div>
-    `).join("") : '<p class="text-muted">No active rides.</p>';
+    `
+            )
+            .join("")
+        : '<p class="text-muted">No active rides.</p>';
   } catch (err) {
     console.error("Error loading rides:", err);
   }
@@ -223,26 +278,41 @@ async function loadAvailableRides() {
   if (!currentUser || currentUser.role !== "driver") return;
   try {
     const rides = await apiFetch("/rides");
-    const availableRides = rides.filter(r => r.status === "requested");
+    const availableRides = rides.filter((r) => r.status === "requested");
     const container = document.getElementById("availableRidesContainer");
 
-    container.innerHTML = availableRides.length === 0 ? '<p class="text-muted">No available rides at the moment.</p>' : availableRides.map(ride => `
+    container.innerHTML =
+      availableRides.length === 0
+        ? '<p class="text-muted">No available rides at the moment.</p>'
+        : availableRides
+            .map(
+              (ride) => `
       <div class="ride-item available">
         <div class="ride-header">
           <span class="ride-id">Ride #${ride.ride_id}</span>
           <span class="badge requested">AVAILABLE</span>
         </div>
         <div class="ride-details">
-          <p><i class="fas fa-user"></i> <strong>Rider ID:</strong> ${ride.rider_id}</p>
-          <p><i class="fas fa-map-marker-alt"></i> <strong>From:</strong> ${ride.pickup_location}</p>
-          <p><i class="fas fa-map-marker-alt"></i> <strong>To:</strong> ${ride.drop_location}</p>
-          <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹${ride.fare || "N/A"}</p>
+          <p><i class="fas fa-user"></i> <strong>Rider ID:</strong> ${
+            ride.rider_id
+          }</p>
+          <p><i class="fas fa-map-marker-alt"></i> <strong>From:</strong> ${
+            ride.pickup_location
+          }</p>
+          <p><i class="fas fa-map-marker-alt"></i> <strong>To:</strong> ${
+            ride.drop_location
+          }</p>
+          <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹${
+            ride.fare || "N/A"
+          }</p>
         </div>
         <button class="btn-sm btn-accent" onclick="acceptRide(${ride.ride_id})">
           <i class="fas fa-check"></i> Accept Ride
         </button>
       </div>
-    `).join("");
+    `
+            )
+            .join("");
   } catch (err) {
     console.error("Error loading available rides:", err);
   }
@@ -252,24 +322,45 @@ async function loadMyAcceptedRides() {
   if (!currentUser || currentUser.role !== "driver") return;
   try {
     const rides = await apiFetch("/rides");
-    const myRides = rides.filter(r => r.driver_id === currentUser.user_id);
+    const myRides = rides.filter((r) => r.driver_id === currentUser.user_id);
     const activeFeed = document.getElementById("driverActiveFeed");
 
-    activeFeed.innerHTML = myRides.length === 0 ? '<p class="text-muted">No accepted rides yet.</p>' : myRides.map(ride => `
+    activeFeed.innerHTML =
+      myRides.length === 0
+        ? '<p class="text-muted">No accepted rides yet.</p>'
+        : myRides
+            .map(
+              (ride) => `
       <div class="ride-item ${ride.status}">
         <div class="ride-header">
           <span class="ride-id">Ride #${ride.ride_id}</span>
           <span class="badge ${ride.status}">${ride.status.toUpperCase()}</span>
         </div>
         <div class="ride-details">
-          <p><i class="fas fa-user"></i> <strong>Rider ID:</strong> ${ride.rider_id}</p>
-          <p><i class="fas fa-map-marker-alt"></i> <strong>Route:</strong> ${ride.pickup_location} → ${ride.drop_location}</p>
-          <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹${ride.fare || "N/A"}</p>
+          <p><i class="fas fa-user"></i> <strong>Rider ID:</strong> ${
+            ride.rider_id
+          }</p>
+          <p><i class="fas fa-map-marker-alt"></i> <strong>Route:</strong> ${
+            ride.pickup_location
+          } → ${ride.drop_location}</p>
+          <p><i class="fas fa-rupee-sign"></i> <strong>Fare:</strong> ₹${
+            ride.fare || "N/A"
+          }</p>
         </div>
-        ${ride.status === "ongoing" ? `<button class="btn-sm btn-success" onclick="completeRide(${ride.ride_id})"><i class="fas fa-check-circle"></i> Complete Ride</button>` : ""}
-        ${ride.status === "ongoing" ? `<button class="btn-sm btn-danger" onclick="cancelRide(${ride.ride_id})">Cancel</button>` : ""}
+        ${
+          ride.status === "ongoing"
+            ? `<button class="btn-sm btn-success" onclick="completeRide(${ride.ride_id})"><i class="fas fa-check-circle"></i> Complete Ride</button>`
+            : ""
+        }
+        ${
+          ride.status === "ongoing"
+            ? `<button class="btn-sm btn-danger" onclick="cancelRide(${ride.ride_id})">Cancel</button>`
+            : ""
+        }
       </div>
-    `).join("");
+    `
+            )
+            .join("");
   } catch (err) {
     console.error("Error loading accepted rides:", err);
   }
@@ -312,7 +403,10 @@ async function viewAllRides() {
   try {
     const rides = await apiFetch("/rides");
     const container = document.getElementById("allRidesContainer");
-    container.innerHTML = rides.length === 0 ? '<p class="text-muted">No rides found.</p>' : `
+    container.innerHTML =
+      rides.length === 0
+        ? '<p class="text-muted">No rides found.</p>'
+        : `
       <table class="data-table">
         <thead>
           <tr>
@@ -326,7 +420,9 @@ async function viewAllRides() {
           </tr>
         </thead>
         <tbody>
-          ${rides.map(r => `
+          ${rides
+            .map(
+              (r) => `
             <tr>
               <td>${r.ride_id}</td>
               <td>${r.rider_id}</td>
@@ -336,7 +432,9 @@ async function viewAllRides() {
               <td>₹${r.fare || "N/A"}</td>
               <td><span class="badge ${r.status}">${r.status}</span></td>
             </tr>
-          `).join("")}
+          `
+            )
+            .join("")}
         </tbody>
       </table>
     `;
@@ -345,7 +443,8 @@ async function viewAllRides() {
 }
 
 function openVehicleRegistration() {
-  if (!currentUser || currentUser.role !== "driver") return showNotification("Only drivers can register vehicles.", "error");
+  if (!currentUser || currentUser.role !== "driver")
+    return showNotification("Only drivers can register vehicles.", "error");
   openModal("vehicleModal");
 }
 
@@ -357,7 +456,11 @@ document.getElementById("vehicleForm").onsubmit = async (e) => {
   const color = document.getElementById("vehicleColor").value.trim();
   const year = document.getElementById("vehicleYear").value;
 
-  if (!make || !model || !plate) return showNotification("Make, Model, and Plate Number are required.", "error");
+  if (!make || !model || !plate)
+    return showNotification(
+      "Make, Model, and Plate Number are required.",
+      "error"
+    );
 
   const mutation = `
     mutation RegisterVehicle($input: VehicleInput!) {
@@ -401,7 +504,8 @@ async function loadMyVehicle() {
     const data = await gqlFetch(query, variables);
     const container = document.getElementById("vehicleInfo");
     const v = data.getVehicleByDriver;
-    container.innerHTML = v ? `
+    container.innerHTML = v
+      ? `
       <div class="info-card">
         <h4><i class="fas fa-car"></i> Your Vehicle</h4>
         <p><strong>Make:</strong> ${v.make}</p>
@@ -410,7 +514,8 @@ async function loadMyVehicle() {
         <p><strong>Color:</strong> ${v.color || "N/A"}</p>
         <p><strong>Year:</strong> ${v.year || "N/A"}</p>
       </div>
-    ` : '<p class="text-muted">No vehicle registered yet.</p>';
+    `
+      : '<p class="text-muted">No vehicle registered yet.</p>';
   } catch (err) {
     console.error("Error loading vehicle:", err);
   }
@@ -427,7 +532,8 @@ document.getElementById("paymentForm").onsubmit = async (e) => {
   const amount = document.getElementById("paymentAmount").value;
   const method = document.getElementById("paymentMethod").value;
 
-  if (!rideId || !amount || !method) return showNotification("All fields are required.", "error");
+  if (!rideId || !amount || !method)
+    return showNotification("All fields are required.", "error");
 
   const envelope = `<?xml version="1.0" encoding="UTF-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="http://localhost:3000/soap/payment">
@@ -450,9 +556,17 @@ document.getElementById("paymentForm").onsubmit = async (e) => {
       document.getElementById("paymentForm").reset();
     } else if (xmlText.includes("Fault") || xmlText.includes("Error")) {
       const errorMatch = xmlText.match(/<faultstring>(.*?)<\/faultstring>/i);
-      showNotification(`Payment failed: ${errorMatch ? errorMatch[1] : "Payment processing failed"}`, "error");
+      showNotification(
+        `Payment failed: ${
+          errorMatch ? errorMatch[1] : "Payment processing failed"
+        }`,
+        "error"
+      );
     } else {
-      showNotification("Payment response unclear. Check console for details.", "warning");
+      showNotification(
+        "Payment response unclear. Check console for details.",
+        "warning"
+      );
     }
   } catch {}
 };
@@ -469,7 +583,11 @@ document.getElementById("ratingForm").onsubmit = async (e) => {
   const score = document.getElementById("ratingScore").value;
   const comment = document.getElementById("ratingComment").value.trim();
 
-  if (!rideId || !givenTo || !score) return showNotification("Ride ID, User ID, and Rating are required.", "error");
+  if (!rideId || !givenTo || !score)
+    return showNotification(
+      "Ride ID, User ID, and Rating are required.",
+      "error"
+    );
 
   const mutation = `
     mutation AddRating($input: RatingInput!) {
@@ -511,7 +629,11 @@ async function viewMyRatings() {
     const data = await gqlFetch(query, variables);
     const ratings = data.getRatingsByUser;
     const container = document.getElementById("ratingsViewContainer");
-    container.innerHTML = ratings && ratings.length > 0 ? ratings.map(r => `
+    container.innerHTML =
+      ratings && ratings.length > 0
+        ? ratings
+            .map(
+              (r) => `
       <div class="rating-item">
         <div class="rating-header">
           <span class="rating-stars">${"⭐".repeat(r.score)}</span>
@@ -520,7 +642,10 @@ async function viewMyRatings() {
         <p><strong>From User ID:</strong> ${r.given_by}</p>
         <p><strong>Comment:</strong> ${r.comment || "No comment"}</p>
       </div>
-    `).join("") : '<p class="text-muted">No ratings received yet.</p>';
+    `
+            )
+            .join("")
+        : '<p class="text-muted">No ratings received yet.</p>';
     openModal("ratingsViewModal");
   } catch {}
 }
