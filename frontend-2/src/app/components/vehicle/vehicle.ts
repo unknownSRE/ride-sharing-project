@@ -27,9 +27,8 @@ export class VehicleComponent implements OnInit {
     vehicleNumber: '',
     vehicleType: '',
     driverName: '',
-    capacity: 0,
     status: 'Available'
-  };
+  } as any;
 
   ngOnInit(): void {
     if (this.driverId) {
