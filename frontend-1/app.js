@@ -23,7 +23,7 @@ const showNotification = (message, type = "info") => {
   alert(message);
 };
 
-async function apiFetch(endpoint, options = {}) {
+async function restFetch(endpoint, options = {}) {
   try {
     const response = await fetch(`${API_BASE}${endpoint}`, options);
     const data = await response.json();
@@ -100,7 +100,7 @@ document.getElementById("regForm").onsubmit = async (e) => {
   };
 
   try {
-    const data = await apiFetch("/users/register", {
+    const data = await restFetch("/users/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -108,7 +108,7 @@ document.getElementById("regForm").onsubmit = async (e) => {
     closeModal("registerModal");
     showNotification(
       `Registration successful! Please login with your email and password.`,
-      "success"
+      "success",
     );
     document.getElementById("regForm").reset();
   } catch {}
@@ -121,7 +121,7 @@ const handleLogin = async () => {
     return showNotification("Please enter email and password.", "error");
 
   try {
-    const data = await apiFetch("/users/login", {
+    const data = await restFetch("/users/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -138,9 +138,8 @@ const handleLogin = async () => {
 const updateUI = (user) => {
   document.getElementById("auth-section").classList.add("hidden");
   document.getElementById("user-display").classList.remove("hidden");
-  document.getElementById(
-    "welcomeText"
-  ).innerText = `Hello, ${user.full_name} (${user.role})`;
+  document.getElementById("welcomeText").innerText =
+    `Hello, ${user.full_name} (${user.role})`;
   document.getElementById("guestView").style.display = "none";
   document.getElementById("commonSections").classList.remove("hidden");
 
@@ -173,11 +172,11 @@ const requestRide = async () => {
   if (!pickup || !dropoff)
     return showNotification(
       "Please enter both pickup and drop locations.",
-      "error"
+      "error",
     );
 
   try {
-    const data = await apiFetch("/rides/request", {
+    const data = await restFetch("/rides/request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -188,7 +187,7 @@ const requestRide = async () => {
     });
     showNotification(
       `Ride requested successfully! Fare: ${data.ride_details.calculated_fare}`,
-      "success"
+      "success",
     );
     document.getElementById("pickup").value = "";
     document.getElementById("dropoff").value = "";
@@ -199,7 +198,7 @@ const requestRide = async () => {
 const loadMyRides = async () => {
   if (!currentUser) return;
   try {
-    const rides = await apiFetch("/rides");
+    const rides = await restFetch("/rides");
     const myRides = rides.filter((r) => r.rider_id === currentUser.user_id);
     const container = document.getElementById("myRidesContainer");
     const activeFeed = document.getElementById("riderActiveFeed");
@@ -245,12 +244,12 @@ const loadMyRides = async () => {
             : ""
         }
       </div>
-    `
+    `,
       )
       .join("");
 
     const activeRides = myRides.filter((r) =>
-      ["requested", "ongoing"].includes(r.status)
+      ["requested", "ongoing"].includes(r.status),
     );
     activeFeed.innerHTML =
       activeRides.length > 0
@@ -263,7 +262,7 @@ const loadMyRides = async () => {
         }</strong> - ${ride.status.toUpperCase()}<br>
         ${ride.pickup_location} → ${ride.drop_location}
       </div>
-    `
+    `,
             )
             .join("")
         : '<p class="text-muted">No active rides.</p>';
@@ -275,7 +274,7 @@ const loadMyRides = async () => {
 const loadAvailableRides = async () => {
   if (!currentUser || currentUser.role !== "driver") return;
   try {
-    const rides = await apiFetch("/rides");
+    const rides = await restFetch("/rides");
     const availableRides = rides.filter((r) => r.status === "requested");
     const container = document.getElementById("availableRidesContainer");
 
@@ -308,7 +307,7 @@ const loadAvailableRides = async () => {
           <i class="fas fa-check"></i> Accept Ride
         </button>
       </div>
-    `
+    `,
             )
             .join("");
   } catch (err) {
@@ -319,7 +318,7 @@ const loadAvailableRides = async () => {
 const loadMyAcceptedRides = async () => {
   if (!currentUser || currentUser.role !== "driver") return;
   try {
-    const rides = await apiFetch("/rides");
+    const rides = await restFetch("/rides");
     const myRides = rides.filter((r) => r.driver_id === currentUser.user_id);
     const activeFeed = document.getElementById("driverActiveFeed");
 
@@ -356,7 +355,7 @@ const loadMyAcceptedRides = async () => {
             : ""
         }
       </div>
-    `
+    `,
             )
             .join("");
   } catch (err) {
@@ -367,7 +366,7 @@ const loadMyAcceptedRides = async () => {
 const acceptRide = async (rideId) => {
   if (!currentUser || currentUser.role !== "driver") return;
   try {
-    await apiFetch(`/rides/accept/${rideId}`, {
+    await restFetch(`/rides/accept/${rideId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ driver_id: currentUser.user_id }),
@@ -380,7 +379,7 @@ const acceptRide = async (rideId) => {
 
 const completeRide = async (rideId) => {
   try {
-    await apiFetch(`/rides/complete/${rideId}`, { method: "PUT" });
+    await restFetch(`/rides/complete/${rideId}`, { method: "PUT" });
     showNotification("Ride completed successfully!", "success");
     if (currentUser.role === "driver") loadMyAcceptedRides();
     else loadMyRides();
@@ -390,7 +389,7 @@ const completeRide = async (rideId) => {
 const cancelRide = async (rideId) => {
   if (!confirm("Are you sure you want to cancel this ride?")) return;
   try {
-    await apiFetch(`/rides/cancel/${rideId}`, { method: "PUT" });
+    await restFetch(`/rides/cancel/${rideId}`, { method: "PUT" });
     showNotification("Ride cancelled.", "info");
     if (currentUser.role === "driver") loadMyAcceptedRides();
     else loadMyRides();
@@ -399,7 +398,7 @@ const cancelRide = async (rideId) => {
 
 const viewAllRides = async () => {
   try {
-    const rides = await apiFetch("/rides");
+    const rides = await restFetch("/rides");
     const container = document.getElementById("allRidesContainer");
     container.innerHTML =
       rides.length === 0
@@ -430,7 +429,7 @@ const viewAllRides = async () => {
               <td>₹${r.fare || "N/A"}</td>
               <td><span class="badge ${r.status}">${r.status}</span></td>
             </tr>
-          `
+          `,
             )
             .join("")}
         </tbody>
@@ -457,7 +456,7 @@ document.getElementById("vehicleForm").onsubmit = async (e) => {
   if (!make || !model || !plate)
     return showNotification(
       "Make, Model, and Plate Number are required.",
-      "error"
+      "error",
     );
 
   const mutation = `
@@ -556,7 +555,7 @@ document.getElementById("paymentForm").onsubmit = async (e) => {
         `Payment failed: ${
           errorMatch ? errorMatch[1] : "Payment processing failed"
         }`,
-        "error"
+        "error",
       );
     } else {
       // Assume success if no fault
@@ -564,7 +563,7 @@ document.getElementById("paymentForm").onsubmit = async (e) => {
       const txnId = txnMatch ? txnMatch[1] : "N/A";
       showNotification(
         `Payment completed successfully! Transaction ID: ${txnId}`,
-        "success"
+        "success",
       );
       closeModal("paymentModal");
       document.getElementById("paymentForm").reset();
@@ -587,7 +586,7 @@ document.getElementById("ratingForm").onsubmit = async (e) => {
   if (!rideId || !givenTo || !score)
     return showNotification(
       "Ride ID, User ID, and Rating are required.",
-      "error"
+      "error",
     );
 
   const mutation = `
@@ -643,7 +642,7 @@ const viewMyRatings = async () => {
         <p><strong>From User ID:</strong> ${r.given_by}</p>
         <p><strong>Comment:</strong> ${r.comment || "No comment"}</p>
       </div>
-    `
+    `,
             )
             .join("")
         : '<p class="text-muted">No ratings received yet.</p>';
